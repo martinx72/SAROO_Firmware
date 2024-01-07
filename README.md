@@ -58,13 +58,13 @@ Game ISO or CUE+BIN files must be place inside ISO sub folder, and you must make
 # avaiable:
 #   lang_id=x
 #     Language supported:  
-#	      0: Simplified Chinese - 简体中文 
+#	      0: 简体中文 
 #	      1: English 
-#	      2: Portuguese (Brazil) - Português do Brasil
-#	      3: Japanese - 日本語 
-#	      4: Russian - Русский
-#	      5: Traditional Chinese - 繁體中文 
-#	      6: French - Français
+#	      2: Português do Brasil
+#	      3: 日本語 
+#	      4: Русский
+#	      5: 繁體中文 
+#	      6: Français
 #   auto_update:
 #     MCU if it is existed on sd card
 #   play_delay=xxxx

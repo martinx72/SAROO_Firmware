@@ -60,7 +60,7 @@ Game ISO or CUE+BIN files must be place inside ISO sub folder, and you must make
 #          3: Japanese 
 #          4: Russian 
 #          5: Chinese(Taiwan) 
-#          6: Franch
+#          6: French
 #   auto_update:
 #     MCU if it is existed on sd card
 #   play_delay=xxxx

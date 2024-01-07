@@ -13,7 +13,7 @@ Note:
 
 
 
-&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/martinx72/SAROO_Firmware/blob/09ebe1ff1cbf52a99284ff4a69d700a4839aedc2/demo_gif/2024010718085950%20%5BAVC%20720p%5D%20%5B640i%5D.gif" width="320"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/martinx72/SAROO_Firmware/blob/09ebe1ff1cbf52a99284ff4a69d700a4839aedc2/demo_gif/2024010718044765%20%5BAVC%20720p%5D%20%5B640i%5D.gif" width="320"/>
+&nbsp;&nbsp;<img src="https://github.com/martinx72/SAROO_Firmware/blob/09ebe1ff1cbf52a99284ff4a69d700a4839aedc2/demo_gif/2024010718085950%20%5BAVC%20720p%5D%20%5B640i%5D.gif" width="320"/>&nbsp;&nbsp;<img src="https://github.com/martinx72/SAROO_Firmware/blob/09ebe1ff1cbf52a99284ff4a69d700a4839aedc2/demo_gif/2024010718044765%20%5BAVC%20720p%5D%20%5B640i%5D.gif" width="320"/>
 
 # SAROO Firmware files
 

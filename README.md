@@ -24,7 +24,7 @@ A SD Card basic layout should be as follow:
       + ssfirm.bin
       + saroocfg.txt
       + mcuapp.bin
-  + [bin]
+  + [BIN]
   + [ISO]
   + [update]
 </code></pre>

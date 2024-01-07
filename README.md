@@ -9,6 +9,8 @@ Note:
    Kaito team does not make any Saroo hardware and sell it!
 </code></pre>
 
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/rgrdev)  [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/I2I1J3G3I)
+
 # SAROO Firmware files
 
 Please make sure your cartridge came with FPGA:**05** and MCU:**231125** or later. If not, please contact your sourcer to make sure it has been updated.

@@ -3,7 +3,7 @@
 <pre><code class="fenced-code-block language-SAROO">Base: tpunix, xvortex on github
 Enhance: martinx72, psplandy on github
 Kaito Gaming Group on Facebook:
-   https://www.facebook.com/groups/GameKaito
+   https://www.facebook.com/groups/kaitogaming
 Note:
    This program is freeware, if you paid for it you have been scammed.
    Kaito team does not make any Saroo hardware and sell it!

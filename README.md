@@ -52,23 +52,36 @@ Game ISO or CUE+BIN files must be place inside ISO sub folder, and you must make
           + game3.img
 </code></pre>
 
-# SAROO Config file major setting
+# SAROO Config file major settings
 
 <pre><code class="fenced-code-block language-SAROO"># SAROO config file
-# avaiable:
+#
+# Available configurations:
+#
 #   lang_id=x
-#     Language supported:  
-#	      0: 简体中文 
-#	      1: English 
-#	      2: Português do Brasil
-#	      3: 日本語 
-#	      4: Русский
-#	      5: 繁體中文 
-#	      6: Français
+#	       0: Simplified Chinese - 简体中文 
+#	       1: English 
+#	       2: Portuguese (Brazil) - Português do Brasil
+#	       3: Japanese - 日本語 
+#	       4: French - Français
+#	       5: Russian - Русский
+#	       6: Traditional Chinese - 繁體中文 
+#	       7: Germany - Deutsch
+#	       8: Spainsh - Español
+#	       9: Italian - Italiano
+#	      10: Polish - Polski
+#	      11: Swedish  - Svenska
+#	      12: Greek - ελληνικά
+#	      13: Romanian - Română
+#
+#   debug=xxxxxxxx
+#     setting special flags for debuging
 #   auto_update:
 #     MCU if it is existed on sd card
 #   play_delay=xxxx
 #     Delay time before CD launch, unit: us, in decimal
+#   pend_delay=xxxx
+#     Delay time before CD playing command acutally ends, unit: us, in decimal
 #   sector_delay=xxxx
 #     Delay time after each sector of CD reading, unit: us, in decimal
 #   exmem_1M
@@ -81,18 +94,34 @@ Game ISO or CUE+BIN files must be place inside ISO sub folder, and you must make
 #     Modify RAM content in 16bit format
 #   M_xxxxxxxx=xx
 #     Modify RAM content in 8bit format
-#   debug=xxxxxxxx
-#     setting special flags for debuging
-#  [global] section is global settins
+#   multi_disc="xxxx"
+#     for multiple discs image files, 
+#       how to name the file properly? just check the discussion in this URL below:
+#       https://github.com/tpunix/SAROO/issues/71#issuecomment-2002320092
+#   category="xxxx"
+#     Custom game categories (up to 12 subfolders)
+#   sort_mode=x
+#     0 = no sort
+#     1 = sort ASC
+#     2 = sort DESC
+#   idx_in_list=x
+#     0 = don't display any index in the game list
+#     1 = add index number before the game title in the game list
+#
+
 [global]
 lang_id = 1
+sort_mode = 1
+idx_in_list = 0
 exmem_4M
 
-# TAROMARU         太郎丸
-[T-4804G   V1.004]
-sector_delay=1000
+# Final Fight Revenge
+[T-1248G   V1.004]
+sector_delay = 2000
 
-# SALAMANDER-DP    沙罗曼蛇合集
-[T-9520G   V1.010]
-sector_delay=2000
+
+# PUZZLE BOBBLE 3
+[T-1109G   V1.002]
+sector_delay = 4000
+
 </code></pre>

@@ -1,0 +1,345 @@
+<!--
+SPDX-License-Identifier: AGPL-3.0-or-later
+
+Additional attribution notice under AGPL-3.0-or-later section 7(b):
+
+Modified versions must preserve the following author attribution in the
+source code notices and in the interactive web tool's legal notice/footer
+or an equivalent "About / Credits" area:
+
+©2026 - MarTinX (https://github.com/martinx72) /
+Retro Game Restore (https://retrogamerestore.com/)
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title data-i18n="app.title">SAROO Cheat Builder</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="floating-controls">
+    <select id="ui-language" class="language-select" aria-label="UI language" data-i18n-aria-label="uiLanguage">
+      <option value="en">English</option>
+      <option value="zh-TW">繁體中文</option>
+      <option value="ja">日本語</option>
+    </select>
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle color theme" aria-pressed="false" data-i18n-aria-label="themeToggle">☾</button>
+  </div>
+  <main>
+    <section class="hero">
+      <h1 data-i18n="app.title">SAROO Cheat Builder</h1>
+      <p>
+        <span data-i18n="hero.description">Build SAROO `.scht` files from user-provided cheat codes. The tool can convert manual AR/GameShark-style code input, RetroArch cheat files, and user-supplied Pseudo Saturn Kai source files.</span>
+        <span class="hero-note" data-i18n-html="hero.compatibility">`.scht` cheat files are currently supported only by <a href="https://github.com/martinx72/SAROO_Firmware" target="_blank" rel="noopener noreferrer">MarTinX SAROO firmware</a>.</span>
+      </p>
+    </section>
+
+    <section class="tab-shell">
+      <nav class="tab-strip" role="tablist" aria-label="Builder tabs" data-i18n-aria-label="tabs.aria">
+        <button id="ar-tab" class="tab active" type="button" role="tab" aria-selected="true" aria-controls="ar-panel" data-tab="ar-panel" data-i18n="tabs.actionReplay">AR Code to SCHT</button>
+        <button id="editor-tab" class="tab" type="button" role="tab" aria-selected="false" aria-controls="editor-panel" data-tab="editor-panel" data-i18n="tabs.schtEditor">SCHT Editor</button>
+        <button id="retro-tab" class="tab" type="button" role="tab" aria-selected="false" aria-controls="retro-panel" data-tab="retro-panel" data-i18n="tabs.retroArch">RetroArch CHT</button>
+        <button id="pskai-tab" class="tab" type="button" role="tab" aria-selected="false" aria-controls="pskai-panel" data-tab="pskai-panel" data-i18n="tabs.pskai">PSKai Source</button>
+        <button id="ids-tab" class="tab" type="button" role="tab" aria-selected="false" aria-controls="ids-panel" data-tab="ids-panel" data-i18n="tabs.gameIds">Game IDs</button>
+      </nav>
+      <div class="tab-page">
+        <section id="ar-panel" class="tab-panel active" role="tabpanel" aria-labelledby="ar-tab">
+      <section class="workspace ar-workspace">
+        <section class="panel ar-form">
+          <div class="panel-head">
+            <div>
+              <h2 data-i18n="ar.heading">1. AR Code to SCHT</h2>
+              <p data-i18n="ar.description">Enter one master code and one or more cheat effects.</p>
+            </div>
+          </div>
+
+          <label for="ar-game-name" data-i18n="common.gameName">Game Name</label>
+          <input id="ar-game-name" type="text" placeholder="Saturn game name" data-i18n-placeholder="ar.gameNamePlaceholder">
+
+          <label for="ar-master-code" data-i18n="common.masterCode">Master Code</label>
+          <textarea id="ar-master-code" class="small-textarea" spellcheck="false" placeholder="F6000914 C305&#10;B60FF000 007D"></textarea>
+
+          <div class="effect-head">
+            <h2 data-i18n="ar.effectsHeading">2. Cheat Effects</h2>
+            <div class="effect-actions">
+              <button id="ar-add-group" class="ghost-button" type="button" data-i18n="ar.addGroup">Add Group Header</button>
+              <button id="ar-add-effect" class="ghost-button" type="button" data-i18n="ar.addEffect">Add Effect</button>
+            </div>
+          </div>
+          <div id="ar-effects" class="effects"></div>
+        </section>
+
+        <section class="panel preview-panel">
+          <div class="panel-head">
+            <div>
+              <h2 data-i18n="common.previewSave3">3. Preview And Save</h2>
+              <p data-i18n="common.previewDescription">The preview is the plain-text sample used to build the binary.</p>
+            </div>
+          </div>
+          <label for="ar-filename" data-i18n="common.outputFilename">Output filename</label>
+          <div class="save-row">
+            <input id="ar-filename" type="text" value="SaturnGame.scht">
+            <button id="ar-save" type="button" disabled data-i18n="common.saveScht">Save .scht</button>
+          </div>
+          <pre id="ar-preview"></pre>
+          <section class="menu-preview-block">
+            <h3 data-i18n="common.menuPreview">SAROO Menu Preview</h3>
+            <p data-i18n="common.menuPreviewDescription">Interactive visual preview only. Checkbox changes here do not alter the saved file.</p>
+            <div id="ar-menu-preview" class="menu-preview"></div>
+          </section>
+          <div class="status" id="ar-status"></div>
+        </section>
+      </section>
+        </section>
+
+        <section id="editor-panel" class="tab-panel" role="tabpanel" aria-labelledby="editor-tab" hidden>
+          <section class="workspace editor-workspace">
+            <div class="editor-side-stack">
+              <section class="panel editor-form">
+                <div class="panel-head">
+                  <div>
+                    <h2 data-i18n="editor.loadHeading">1. Load Existing .scht</h2>
+                    <p data-i18n="editor.loadDescription">Decode a SAROO cheat binary into editable plain-text DSL.</p>
+                  </div>
+                </div>
+                <label class="file-drop editor-file-drop" for="editor-file">
+                  <span data-i18n="editor.selectFile">Select .scht file</span>
+                  <input id="editor-file" type="file" accept=".scht">
+                </label>
+              </section>
+
+              <section class="panel editor-save-panel">
+                <div class="panel-head">
+                  <div>
+                    <h2 data-i18n="common.save3">3. Save</h2>
+                  </div>
+                </div>
+                <label for="editor-filename" data-i18n="common.outputFilename">Output filename</label>
+                <div class="save-row">
+                  <input id="editor-filename" type="text" value="SaturnGame.scht">
+                  <button id="editor-save" type="button" disabled data-i18n="common.saveScht">Save .scht</button>
+                </div>
+              </section>
+            </div>
+
+            <section class="panel editor-panel">
+              <div class="panel-head">
+                <div>
+                  <h2 data-i18n="common.editPlainText2">2. Edit Plain Text</h2>
+                  <p data-i18n="editor.editDescription">Edit the decoded DSL, then save it back as SAROO binary.</p>
+                </div>
+                <button id="editor-validate" class="ghost-button" type="button" data-i18n="common.validate">Validate</button>
+              </div>
+              <textarea id="editor-dsl" class="dsl-textarea" spellcheck="false" placeholder="Load a .scht file to edit it here." data-i18n-placeholder="editor.dslPlaceholder"></textarea>
+              <pre id="editor-preview"></pre>
+              <section class="menu-preview-block">
+                <h3 data-i18n="common.menuPreview">SAROO Menu Preview</h3>
+                <p data-i18n="common.menuPreviewDescription">Interactive visual preview only. Checkbox changes here do not alter the saved file.</p>
+                <div id="editor-menu-preview" class="menu-preview"></div>
+              </section>
+              <div class="status" id="editor-status"></div>
+            </section>
+          </section>
+        </section>
+
+        <section id="retro-panel" class="tab-panel" role="tabpanel" aria-labelledby="retro-tab" hidden>
+          <section class="workspace editor-workspace">
+            <div class="editor-side-stack">
+              <section class="panel editor-form">
+                <div class="panel-head">
+                  <div>
+                    <h2 data-i18n="retro.loadHeading">1. Load RetroArch .cht</h2>
+                    <p data-i18n="retro.loadDescription">Convert a RetroArch Saturn GameShark-style cheat file into editable SAROO DSL.</p>
+                  </div>
+                </div>
+                <label class="file-drop editor-file-drop" for="retro-file">
+                  <span data-i18n="retro.selectFile">Select RetroArch .cht file</span>
+                  <input id="retro-file" type="file" accept=".cht,text/plain">
+                </label>
+              </section>
+
+              <section class="panel editor-save-panel">
+                <div class="panel-head">
+                  <div>
+                    <h2 data-i18n="common.save3">3. Save</h2>
+                  </div>
+                </div>
+                <label for="retro-filename" data-i18n="common.outputFilename">Output filename</label>
+                <div class="save-row">
+                  <input id="retro-filename" type="text" value="SaturnGame.scht">
+                  <button id="retro-save" type="button" disabled data-i18n="common.saveScht">Save .scht</button>
+                </div>
+              </section>
+            </div>
+
+            <section class="panel editor-panel">
+              <div class="panel-head">
+                <div>
+                  <h2 data-i18n="common.editPlainText2">2. Edit Plain Text</h2>
+                  <p data-i18n="retro.editDescription">Entries with ?? are written as comments; fill the value and uncomment before saving.</p>
+                </div>
+                <button id="retro-validate" class="ghost-button" type="button" data-i18n="common.validate">Validate</button>
+              </div>
+              <textarea id="retro-dsl" class="dsl-textarea" spellcheck="false" placeholder="Load a RetroArch .cht file to convert it here." data-i18n-placeholder="retro.dslPlaceholder"></textarea>
+              <pre id="retro-preview"></pre>
+              <section class="menu-preview-block">
+                <h3 data-i18n="common.menuPreview">SAROO Menu Preview</h3>
+                <p data-i18n="common.menuPreviewDescription">Interactive visual preview only. Checkbox changes here do not alter the saved file.</p>
+                <div id="retro-menu-preview" class="menu-preview"></div>
+              </section>
+              <div class="status" id="retro-status"></div>
+            </section>
+          </section>
+        </section>
+
+        <section id="pskai-panel" class="tab-panel" role="tabpanel" aria-labelledby="pskai-tab" hidden>
+      <section class="panel setup">
+        <div>
+          <h2 data-i18n="psk.loadHeading">1. Load PSKai Data</h2>
+          <p data-i18n-html="psk.loadDescription">
+            Required files: <strong data-required-files></strong>. Place them in
+            the same folder as this page or <code>./psk-data/</code> when running
+            a local HTTP server, or select them with the file picker. <br/>
+            PSKai project page: 
+            <a href="https://ppcenter.webou.net/pskai/" target="_blank" rel="noopener noreferrer">https://ppcenter.webou.net/pskai/</a>.
+          </p>
+        </div>
+        <label class="file-drop" for="psk-files">
+          <span data-i18n="psk.selectFiles">Select PSKai files</span>
+          <input id="psk-files" type="file" multiple accept=".c,.h,.txt">
+        </label>
+        <pre id="file-status"></pre>
+      </section>
+
+      <section class="workspace">
+        <section class="panel games">
+          <div class="panel-head">
+            <div>
+              <h2 data-i18n="psk.chooseGame2">2. Choose Game</h2>
+              <p id="game-count" data-i18n="common.zeroGames">0 games</p>
+            </div>
+          </div>
+          <label for="game-filter" data-i18n="common.filter">Filter</label>
+          <input id="game-filter" type="search" placeholder="Type a game name" data-i18n-placeholder="psk.filterPlaceholder">
+          <select id="game-list" size="12" aria-label="PSKai game list" data-i18n-aria-label="psk.gameListAria"></select>
+        </section>
+
+        <section class="panel preview-panel">
+          <div class="panel-head">
+            <div>
+              <h2 data-i18n="common.previewSave3">3. Preview And Save</h2>
+              <p data-i18n="common.previewDescription">The preview is the plain-text sample used to build the binary.</p>
+            </div>
+            <label class="toggle">
+              <input id="force-rom-handler" type="checkbox">
+              <span data-i18n="psk.forceRomHandler">Force ROM handler</span>
+            </label>
+          </div>
+          <label for="psk-filename" data-i18n="common.outputFilename">Output filename</label>
+          <div class="save-row">
+            <input id="psk-filename" type="text" value="game.scht">
+            <button id="psk-save" type="button" disabled data-i18n="common.saveScht">Save .scht</button>
+          </div>
+          <pre id="psk-preview"></pre>
+          <section class="menu-preview-block">
+            <h3 data-i18n="common.menuPreview">SAROO Menu Preview</h3>
+            <p data-i18n="common.menuPreviewDescription">Interactive visual preview only. Checkbox changes here do not alter the saved file.</p>
+            <div id="psk-menu-preview" class="menu-preview"></div>
+          </section>
+          <div class="status" id="psk-status"></div>
+        </section>
+      </section>
+        </section>
+
+        <section id="ids-panel" class="tab-panel" role="tabpanel" aria-labelledby="ids-tab" hidden>
+          <section class="panel setup">
+            <div>
+              <h2 data-i18n="ids.loadHeading">1. Load Game ID List</h2>
+              <p data-i18n-html="ids.loadDescription">
+                Auto-loads <code>./id_list/game_ids.csv</code> when available.
+                You can also select the CSV manually. <br/>
+                The CSV can be downloaded from the
+                <a href="https://github.com/elephantflea/elephantflea-resources/tree/main/Saroo" target="_blank" rel="noopener noreferrer">Saroo folder in elephantflea-resources</a>.
+              </p>
+            </div>
+            <label class="file-drop" for="id-file">
+              <span data-i18n="ids.selectCsv">Select game_ids.csv</span>
+              <input id="id-file" type="file" accept=".csv,text/csv,text/plain">
+            </label>
+            <pre id="id-status"></pre>
+          </section>
+
+          <section class="workspace id-workspace">
+            <section class="panel games">
+              <div class="panel-head">
+                <div>
+                  <h2 data-i18n="ids.searchTitles2">2. Search Titles</h2>
+                  <p id="id-count" data-i18n="common.zeroGames">0 games</p>
+                </div>
+              </div>
+              <label for="id-filter" data-i18n="common.filter">Filter</label>
+              <input id="id-filter" type="search" placeholder="Type a game title or ID" data-i18n-placeholder="ids.filterPlaceholder">
+              <select id="id-list" size="12" aria-label="Game ID list" data-i18n-aria-label="ids.listAria"></select>
+            </section>
+
+            <section class="panel preview-panel">
+              <div class="panel-head">
+                <div>
+                  <h2 data-i18n="ids.copyHeading3">3. Copy Game ID</h2>
+                  <p data-i18n="ids.copyDescription">Click the Game ID value to copy it without the version suffix.</p>
+                </div>
+              </div>
+              <div id="id-detail" class="id-detail">
+                <p data-i18n="ids.noGameSelected">No game selected.</p>
+              </div>
+              <div class="status" id="id-copy-status"></div>
+            </section>
+          </section>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>
+      ©2026 - <a href="https://github.com/martinx72" target="_blank" rel="noopener noreferrer">MarTinX</a>
+      /
+      <a href="https://retrogamerestore.com/" target="_blank" rel="noopener noreferrer">Retro Game Restore</a>
+      ·
+      <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0-or-later</a>
+    </p>
+  </footer>
+
+  <template id="effect-template">
+    <section class="effect-row">
+      <div class="effect-title">
+        <label data-i18n="ar.effectDescription">Effect Description</label>
+        <button class="remove-effect ghost-button" type="button" data-i18n="common.remove">Remove</button>
+      </div>
+      <input class="effect-description" type="text" placeholder="Unl Energy" data-i18n-placeholder="ar.effectPlaceholder">
+      <div class="effect-meta">
+        <label>
+          <span data-i18n="ar.exclusiveGroup">Exclusive Group</span>
+          <input class="effect-mutex" type="text" placeholder="Optional ID or name" data-i18n-placeholder="ar.exclusivePlaceholder">
+        </label>
+      </div>
+      <label data-i18n="common.code">Code</label>
+      <textarea class="effect-code small-textarea" spellcheck="false" placeholder="160CC166 0072"></textarea>
+    </section>
+  </template>
+
+  <template id="group-template">
+    <section class="effect-row group-header-row" data-row-type="group">
+      <div class="effect-title">
+        <label data-i18n="ar.groupHeader">Group Header</label>
+        <button class="remove-effect ghost-button" type="button" data-i18n="common.remove">Remove</button>
+      </div>
+      <input class="group-title-input" type="text" placeholder="Group Name" data-i18n-placeholder="ar.groupPlaceholder">
+    </section>
+  </template>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

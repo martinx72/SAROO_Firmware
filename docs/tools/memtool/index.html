@@ -1,0 +1,198 @@
+<!--
+SPDX-License-Identifier: AGPL-3.0-or-later
+
+Additional attribution notice under AGPL-3.0-or-later section 7(b):
+
+Modified versions must preserve the following author attribution in the
+source code notices and in the interactive web tool's legal notice/footer
+or an equivalent "About / Credits" area:
+
+©2026 - MarTinX (https://github.com/martinx72) /
+Retro Game Restore (https://retrogamerestore.com/)
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-store">
+  <title data-i18n="appTitle">SAROO Save Memory Tool</title>
+  <link rel="stylesheet" href="./style.css?v=20260514-2">
+</head>
+<body>
+  <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle color theme" data-i18n-aria-label="themeToggle">☾</button>
+  <main>
+    <section class="hero">
+      <h1 data-i18n="appTitle">SAROO Save Memory Tool</h1>
+      <p data-i18n="appIntro">Inspect and rebuild SAROO internal-save and external-memory-card images. All parsing is done locally in the browser.</p>
+    </section>
+
+    <section class="panel warning">
+      <h2 data-i18n="backupTitle">Backup First</h2>
+      <p data-i18n-html="backupText">This tool rewrites save-memory images. Keep a backup of the original <code>SS_SAVE.BIN</code> or <code>SS_MEMS.BIN</code> before replacing files on the SD card.</p>
+    </section>
+
+    <section class="tab-shell">
+      <nav class="tab-strip" role="tablist" aria-label="Memory tool tabs" data-i18n-aria-label="tabListLabel">
+        <button id="ssave-tab" class="tab active" type="button" role="tab" aria-selected="true" aria-controls="ssave-panel" data-tab="ssave-panel" data-i18n="tabSSave">SS_SAVE.BIN</button>
+        <button id="smems-tab" class="tab" type="button" role="tab" aria-selected="false" aria-controls="smems-panel" data-tab="smems-panel" data-i18n="tabSMems">SS_MEMS.BIN</button>
+      </nav>
+
+      <section id="ssave-panel" class="tab-panel active" role="tabpanel" aria-labelledby="ssave-tab">
+        <section class="workspace">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2 data-i18n="loadSSaveTitle">1. Load Internal Save Image</h2>
+                <p data-i18n-html="loadSSaveText">Load <code>/SAROO/SS_SAVE.BIN</code>. This file contains one internal-backup slot per game id.</p>
+              </div>
+            </div>
+            <label class="file-drop" for="ssave-file">
+              <span data-i18n="selectSSave">Select SS_SAVE.BIN</span>
+              <input id="ssave-file" type="file" accept=".bin,application/octet-stream">
+            </label>
+            <div id="ssave-summary" class="summary" data-i18n="noSSaveLoaded">No SS_SAVE.BIN loaded.</div>
+
+            <h3 data-i18n="createSlotTitle">Create Game Slot</h3>
+            <p class="hint" data-i18n="createSlotHint">Use this only when a game id slot does not exist yet. Game id is stored as a 16-byte SAROO slot key.</p>
+            <div class="inline-form">
+              <input id="new-game-id" type="text" maxlength="16" placeholder="T-12345G  V1.000" data-i18n-placeholder="gameIdPlaceholder">
+              <button id="create-slot" type="button" disabled data-i18n="createSlot">Create Slot</button>
+            </div>
+
+            <h3 data-i18n="gameSlotsWithSaves">Game Slots With Saves</h3>
+        <div class="split-list">
+          <div>
+            <label for="ssave-slot-list" data-i18n="gameIdSlots">Game id slots</label>
+            <select id="ssave-slot-list" size="12" disabled></select>
+          </div>
+          <div class="save-column">
+            <label for="ssave-save-list" data-i18n="saveEntries">Save entries</label>
+            <select id="ssave-save-list" size="12" disabled></select>
+            <div id="ssave-slot-meta" class="mini-meta" data-i18n="noGameSlotSelected">No game slot selected.</div>
+          </div>
+            </div>
+
+            <details class="empty-slots">
+              <summary data-i18n="playedSlots0">Played slots with 0 saves</summary>
+              <select id="empty-slot-list" size="8" disabled></select>
+            </details>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2 data-i18n="exportImportTitle">2. Export / Import</h2>
+                <p data-i18n-html="ssaveExportImportText">Export one internal save as <code>SSAVERAW</code>, or import a <code>SSAVERAW</code> file into the selected game slot.</p>
+              </div>
+            </div>
+
+            <div class="save-detail" id="ssave-detail" data-i18n="selectSaveEntry">Select a save entry.</div>
+            <div class="button-row">
+              <button id="ssave-export" type="button" disabled data-i18n="exportSelectedSave">Export Selected Save</button>
+              <button id="ssave-delete" class="danger-button" type="button" disabled data-i18n="deleteSelectedSave">Delete Selected Save</button>
+            </div>
+
+            <h3 data-i18n="importSSAVERAW">Import SSAVERAW</h3>
+            <label class="file-drop compact-drop" for="ssave-raw-file">
+              <span data-i18n="selectSingleSave">Select single-save file</span>
+              <input id="ssave-raw-file" type="file" accept=".bin,.ssaveraw,application/octet-stream">
+            </label>
+            <div id="ssave-raw-summary" class="summary" data-i18n="noRawLoaded">No SSAVERAW loaded.</div>
+
+            <div class="import-grid">
+              <label><span data-i18n="importTarget">Import Target</span>
+                <select id="ssave-import-mode" disabled>
+                  <option value="add" data-i18n="addAsNewSave">Add as new save</option>
+                  <option value="replace" data-i18n="replaceSelectedSave">Replace selected save</option>
+                </select>
+              </label>
+              <button id="ssave-import" type="button" disabled data-i18n="importSSAVERAW">Import SSAVERAW</button>
+            </div>
+
+            <hr>
+
+            <label for="ssave-output-name" data-i18n="outputFilename">Output filename</label>
+            <div class="save-row">
+              <input id="ssave-output-name" type="text" value="SS_SAVE.BIN">
+              <button id="ssave-download" type="button" disabled data-i18n="downloadSSave">Download Rebuilt SS_SAVE.BIN</button>
+            </div>
+            <div id="ssave-status" class="status"></div>
+          </section>
+        </section>
+      </section>
+
+      <section id="smems-panel" class="tab-panel" role="tabpanel" aria-labelledby="smems-tab" hidden>
+        <section class="workspace">
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2 data-i18n="loadSMemsTitle">1. Load External Memory Card Image</h2>
+                <p data-i18n-html="loadSMemsText">Load <code>/SAROO/SS_MEMS.BIN</code>. This file is one virtual external backup memory cartridge.</p>
+              </div>
+            </div>
+            <label class="file-drop" for="smems-file">
+              <span data-i18n="selectSMems">Select SS_MEMS.BIN</span>
+              <input id="smems-file" type="file" accept=".bin,application/octet-stream">
+            </label>
+            <div id="smems-summary" class="summary" data-i18n="noSMemsLoaded">No SS_MEMS.BIN loaded.</div>
+
+            <h3 data-i18n="saveEntries">Save Entries</h3>
+            <label for="smems-save-list" data-i18n="externalCardSaves">External card saves</label>
+            <select id="smems-save-list" size="16" disabled></select>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2 data-i18n="exportImportTitle">2. Export / Import</h2>
+                <p data-i18n-html="smemsExportImportText">Export one external-card save as <code>SSAVERAW</code>, or import a <code>SSAVERAW</code> file into the card image.</p>
+              </div>
+            </div>
+
+            <div class="save-detail" id="smems-detail" data-i18n="selectSaveEntry">Select a save entry.</div>
+            <div class="button-row">
+              <button id="smems-export" type="button" disabled data-i18n="exportSelectedSave">Export Selected Save</button>
+              <button id="smems-delete" class="danger-button" type="button" disabled data-i18n="deleteSelectedSave">Delete Selected Save</button>
+            </div>
+
+            <h3 data-i18n="importSSAVERAW">Import SSAVERAW</h3>
+            <label class="file-drop compact-drop" for="smems-raw-file">
+              <span data-i18n="selectSingleSave">Select single-save file</span>
+              <input id="smems-raw-file" type="file" accept=".bin,.ssaveraw,application/octet-stream">
+            </label>
+            <div id="smems-raw-summary" class="summary" data-i18n="noRawLoaded">No SSAVERAW loaded.</div>
+
+            <div class="import-grid">
+              <label><span data-i18n="importTarget">Import Target</span>
+                <select id="smems-import-mode" disabled>
+                  <option value="add" data-i18n="addAsNewSave">Add as new save</option>
+                  <option value="replace" data-i18n="replaceSelectedSave">Replace selected save</option>
+                </select>
+              </label>
+              <button id="smems-import" type="button" disabled data-i18n="importSSAVERAW">Import SSAVERAW</button>
+            </div>
+
+            <hr>
+
+            <label for="smems-output-name" data-i18n="outputFilename">Output filename</label>
+            <div class="save-row">
+              <input id="smems-output-name" type="text" value="SS_MEMS.BIN">
+              <button id="smems-download" type="button" disabled data-i18n="downloadSMems">Download Rebuilt SS_MEMS.BIN</button>
+            </div>
+            <div id="smems-status" class="status"></div>
+          </section>
+        </section>
+      </section>
+    </section>
+  </main>
+
+  <footer>
+    ©2026 - <a href="https://github.com/martinx72" target="_blank" rel="noopener noreferrer">MarTinX</a> / <a href="https://retrogamerestore.com/" target="_blank" rel="noopener noreferrer">Retro Game Restore</a>
+    · <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0-or-later</a>
+  </footer>
+
+  <script src="./i18n.js?v=20260514-1"></script>
+  <script src="./app.js?v=20260514-3"></script>
+</body>
+</html>

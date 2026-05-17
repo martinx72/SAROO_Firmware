@@ -1,0 +1,198 @@
+<!--
+SPDX-License-Identifier: AGPL-3.0-or-later
+
+Additional attribution notice under AGPL-3.0-or-later section 7(b):
+
+Modified versions must preserve the following author attribution in the
+source code notices and in the interactive web tool's legal notice/footer
+or an equivalent "About / Credits" area:
+
+©2026 - MarTinX (https://github.com/martinx72) /
+Retro Game Restore (https://retrogamerestore.com/)
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-store">
+  <title data-i18n="appTitle">SAROO Config Editor</title>
+  <link rel="stylesheet" href="./style.css?v=20260515-2">
+</head>
+<body>
+  <div class="floating-controls">
+    <select id="ui-language" class="language-select" aria-label="UI language" data-i18n-aria-label="uiLanguage">
+      <option value="en">English</option>
+      <option value="zh-TW">繁體中文</option>
+    </select>
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle color theme" data-i18n-aria-label="themeToggle">☾</button>
+  </div>
+  <main>
+    <section class="hero">
+      <h1 data-i18n="appTitle">SAROO Config Editor</h1>
+      <p data-i18n-html="appIntro">Edit <code>saroocfg.txt</code> for SAROO firmware. The generated file is intended for <code>/SAROO/saroocfg.txt</code> on the SD card.</p>
+    </section>
+
+    <section class="panel loader-panel">
+        <div class="panel-head">
+          <div>
+            <h2 data-i18n="loadStartTitle">Load Or Start</h2>
+            <p data-i18n="loadStartText">Load an existing config, use the bundled default, or start with a minimal file.</p>
+          </div>
+        </div>
+        <div class="load-row">
+          <label class="file-drop" for="cfg-file">
+            <span data-i18n="selectCfg">Select saroocfg.txt</span>
+            <input id="cfg-file" type="file" accept=".txt,text/plain">
+          </label>
+          <button id="load-default" type="button" data-i18n="loadDefault">Load Default Sample</button>
+          <button id="new-config" class="ghost-button" type="button" data-i18n="newMinimal">New Minimal Config</button>
+        </div>
+    </section>
+
+    <section class="workspace">
+      <section class="panel editor-panel">
+        <div class="panel-head">
+          <div>
+            <h2 data-i18n="editConfigTitle">Edit Config</h2>
+            <p id="section-hint" data-i18n="sectionHintDefault">Use Global for default behavior, or Game List for per-game fixes.</p>
+          </div>
+        </div>
+
+        <nav class="tab-strip" role="tablist" aria-label="Config editor tabs" data-i18n-aria-label="tabListLabel">
+          <button id="global-tab" class="tab active" type="button" role="tab" aria-selected="true" aria-controls="global-panel" data-tab="global-panel" data-i18n="globalTab">Global</button>
+          <button id="game-tab" class="tab" type="button" role="tab" aria-selected="false" aria-controls="game-panel" data-tab="game-panel" data-i18n="gameTab">Game Preset</button>
+        </nav>
+
+        <section id="global-panel" class="tab-panel active" role="tabpanel" aria-labelledby="global-tab">
+          <div id="global-editor" class="section-editor">
+            <div class="grid two">
+              <label><span data-i18n="language">Language</span>
+                <select id="global-lang"></select>
+              </label>
+              <label><span data-i18n="externalRam">External RAM</span>
+                <select id="global-exmem">
+                  <option value="" data-i18n="noLine">No line</option>
+                  <option value="exmem_1M" data-i18n="ram1m">1M RAM cart</option>
+                  <option value="exmem_4M" data-i18n="ram4m">4M RAM cart</option>
+                </select>
+              </label>
+              <label><span data-i18n="sortMode">Sort Mode</span>
+                <select id="global-sort">
+                  <option value="" data-i18n="noLine">No line</option>
+                  <option value="0" data-i18n="noSort">No sort</option>
+                  <option value="1" data-i18n="sortAsc">Sort ASC</option>
+                  <option value="2" data-i18n="sortDesc">Sort DESC</option>
+                </select>
+              </label>
+              <label><span data-i18n="displayIndex">Display Index</span>
+                <select id="global-index">
+                  <option value="" data-i18n="noLine">No line</option>
+                  <option value="0" data-i18n="noDisplayIndex">Do not display index</option>
+                  <option value="1" data-i18n="displayIndexEnabled">Display index</option>
+                </select>
+              </label>
+              <label><span data-i18n="debugFlags">Debug Flags (hex)</span>
+                <input id="global-debug" type="text" placeholder="00000000">
+              </label>
+              <label><span data-i18n="logMask">Log Mask (hex)</span>
+                <input id="global-log" type="text" placeholder="0">
+              </label>
+              <label><span data-i18n="autoUpdate">Auto Update</span>
+                <select id="global-auto">
+                  <option value="" data-i18n="noLine">No line</option>
+                  <option value="0" data-i18n="disabled">Disabled</option>
+                  <option value="1" data-i18n="enabled">Enabled</option>
+                </select>
+              </label>
+              <label><span data-i18n="categoryFolders">Category Folders</span>
+                <input id="global-category" type="text" placeholder="Action,STG,RPG">
+              </label>
+            </div>
+            <p class="help" data-i18n-html="logHelp">Recommended normal-use <code>log_mask</code> is blank or <code>0</code>. Useful debug values: <code>10</code> = info only, <code>14</code> = file I/O + info, <code>11c</code> = full CD debug I/O.</p>
+            <label><span data-i18n="extraGlobalLines">Extra Global Lines</span>
+              <textarea id="global-extra" spellcheck="false" placeholder="Unknown or advanced global lines are preserved here." data-i18n-placeholder="extraGlobalPlaceholder"></textarea>
+            </label>
+          </div>
+        </section>
+
+        <section id="game-panel" class="tab-panel" role="tabpanel" aria-labelledby="game-tab" hidden>
+          <div class="game-list-head">
+            <div>
+              <h2 data-i18n="gameSectionsTitle">Game Sections</h2>
+              <p data-i18n="gameSectionsText">Choose a game section to edit, or add a new one.</p>
+            </div>
+            <div class="button-row compact">
+              <button id="add-game" type="button" data-i18n="addGame">Add Game</button>
+              <button id="remove-section" class="danger-button" type="button" data-i18n="remove">Remove</button>
+            </div>
+          </div>
+          <select id="game-section-list" size="8" aria-label="Game config sections" data-i18n-aria-label="gameSectionListLabel"></select>
+
+          <div id="game-editor" class="section-editor">
+            <div class="grid two">
+              <label><span data-i18n="gameId">Game ID</span>
+                <input id="game-id" type="text" placeholder="T-12345G  V1.000" data-i18n-placeholder="gameIdPlaceholder">
+              </label>
+              <label><span data-i18n="commentTitle">Comment / Title</span>
+                <input id="game-title" type="text" placeholder="Game title or note" data-i18n-placeholder="commentTitlePlaceholder">
+              </label>
+              <label><span data-i18n="sectorDelay">Sector Delay (decimal us)</span>
+                <input id="game-sector" type="number" min="0" step="1" placeholder="4000">
+              </label>
+              <label><span data-i18n="playDelay">Play Delay (decimal us)</span>
+                <input id="game-play" type="number" min="0" step="1" placeholder="50000">
+              </label>
+              <label><span data-i18n="pendDelay">Pend Delay (decimal us)</span>
+                <input id="game-pend" type="number" min="0" step="1" placeholder="5000">
+              </label>
+              <label><span data-i18n="externalRam">External RAM</span>
+                <select id="game-exmem">
+                  <option value="" data-i18n="noLine">No line</option>
+                  <option value="exmem_1M" data-i18n="ram1m">1M RAM cart</option>
+                  <option value="exmem_4M" data-i18n="ram4m">4M RAM cart</option>
+                </select>
+              </label>
+              <label><span data-i18n="multiDisc">Multi Disc String</span>
+                <input id="game-multi" type="text" placeholder="Disc set name" data-i18n-placeholder="multiDiscPlaceholder">
+              </label>
+            </div>
+            <label><span data-i18n="memoryPatchLines">Memory Patch Lines</span>
+              <textarea id="game-memory" spellcheck="false" placeholder="M_06000000=00000009" data-i18n-placeholder="memoryPatchPlaceholder"></textarea>
+            </label>
+            <label><span data-i18n="extraGameLines">Extra Game Lines</span>
+              <textarea id="game-extra" spellcheck="false" placeholder="Unknown or advanced game lines are preserved here." data-i18n-placeholder="extraGamePlaceholder"></textarea>
+            </label>
+          </div>
+        </section>
+      </section>
+
+      <section class="panel preview-panel">
+        <div class="panel-head">
+          <div>
+            <h2 data-i18n="previewSaveTitle">4. Preview And Save</h2>
+            <p data-i18n="previewSaveText">The preview is the exact text that will be saved.</p>
+          </div>
+        </div>
+        <label><span data-i18n="outputFilename">Output Filename</span>
+          <input id="output-name" type="text" value="saroocfg.txt">
+        </label>
+        <div class="button-row">
+          <button id="save-config" type="button" data-i18n="saveConfig">Save saroocfg.txt</button>
+          <button id="copy-preview" class="ghost-button" type="button" data-i18n="copyPreview">Copy Preview</button>
+        </div>
+        <textarea id="preview" class="preview" spellcheck="false"></textarea>
+        <div id="status" class="status"></div>
+      </section>
+    </section>
+  </main>
+
+  <footer>
+    ©2026 - <a href="https://github.com/martinx72" target="_blank" rel="noopener noreferrer">MarTinX</a> / <a href="https://retrogamerestore.com/" target="_blank" rel="noopener noreferrer">Retro Game Restore</a>
+    · <a href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank" rel="noopener noreferrer">AGPL-3.0-or-later</a>
+  </footer>
+
+  <script src="./i18n.js?v=20260515-2"></script>
+  <script src="./app.js?v=20260515-2"></script>
+</body>
+</html>
